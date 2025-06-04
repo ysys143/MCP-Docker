@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "Context7 MCP (Docker exec)": {
+        "command": "docker",
+        "args": [
+            "exec",
+            "-i",
+            "mcp-server-docker",
+            "npx",
+            "-y",
+            "@upstash/context7-mcp@latest"
+        ]
+    },
+    "sequential-thinking (Docker exec)": {
+        "command": "docker",
+        "args": [
+            "exec",
+            "-i",
+            "mcp-server-docker",
+            "npx",
+            "-y",
+            "@modelcontextprotocol/server-sequential-thinking"
+        ]
+    },
+    "Python Weather MCP (Docker exec)": {
+        "command": "docker",
+        "args": [
+            "exec",
+            "-i",
+            "mcp-uv-server-docker",
+            "uv",
+            "run",
+            "/app/custom_mcp_server.py"
+        ]
+    }
+  }
+}
