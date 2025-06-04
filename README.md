@@ -3,6 +3,7 @@
 ![How Docker Revolutionizes MCP](docker-mcp.png)
 
 [Korean Version (한국어 버전)](README_KOR.md)
+
 [Docker Blog: How to build and deliver an MCP server for production](https://www.docker.com/blog/build-to-prod-mcp-servers-with-docker/)
 
 Problems with the Existing MCP (Model Context Protocol) Workflow
