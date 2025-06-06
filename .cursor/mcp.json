@@ -5,7 +5,7 @@
         "args": [
             "exec",
             "-i",
-            "mcp-server-docker",
+            "mcp-node-server-docker",
             "npx",
             "-y",
             "@upstash/context7-mcp@latest"
@@ -16,7 +16,7 @@
         "args": [
             "exec",
             "-i",
-            "mcp-server-docker",
+            "mcp-node-server-docker",
             "npx",
             "-y",
             "@modelcontextprotocol/server-sequential-thinking"
@@ -27,10 +27,20 @@
         "args": [
             "exec",
             "-i",
-            "mcp-uv-server-docker",
+            "mcp-python-server-docker",
             "uv",
             "run",
-            "/app/custom_mcp_server.py"
+            "/workspace/examples/custom_mcp_server.py"
+        ]
+    },
+    "OAuth2 MCP Tools (Docker exec)": {
+        "command": "docker",
+        "args": [
+            "exec",
+            "-i",
+            "mcp-python-server-docker",
+            "python",
+            "/workspace/oauth2-demo/core/oauth2_mcp_tools.py"
         ]
     }
   }

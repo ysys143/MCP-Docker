@@ -32,10 +32,10 @@ By isolating the MCP server execution environment with Docker,
 Launch the node20 image with Docker.
 
 ```bash
-docker run -d --name mcp-server-docker -it node:20-slim bash
+docker run -d --name mcp-node-server-docker -it node:20-slim bash
 ```
 
-> **Note**: The container name specified with the `--name` option (`mcp-server-docker`) must be unique within the Docker host. If a container with the same name is already running or stopped, a new container cannot be started. In this case, you must stop and remove the existing container or use a different name.
+> **Note**: The container name specified with the `--name` option (`mcp-node-server-docker`) must be unique within the Docker host. If a container with the same name is already running or stopped, a new container cannot be started. In this case, you must stop and remove the existing container or use a different name.
 
 
 ## 3. MCP Client Configuration (.cursor/mcp.json Example)
@@ -48,10 +48,10 @@ This setup uses `docker exec` to directly call the MCP server script inside the 
 To check if the MCP server is properly ready for execution inside the container, you can access the container and try running the MCP server script directly with the following commands:
 
 ```bash
-docker exec -it mcp-server-docker bash
+docker exec -it mcp-node-server-docker bash
 # (Inside the container) npx -y @upstash/context7-mcp@latest
 # Or for a Python-based server:
-# docker exec -it mcp-uv-server-docker bash
+# docker exec -it mcp-python-server-docker bash
 # (Inside the container) uv run /app/custom_mcp_server.py
 ```
 
@@ -65,7 +65,7 @@ You can configure the `mcp.json` file as follows to connect to the Context7 MCP 
             "args": [
                 "exec",
                 "-i",
-                "mcp-server-docker",
+                "mcp-node-server-docker",
                 "npx",
                 "-y",
                 "@upstash/context7-mcp@latest"
@@ -76,7 +76,7 @@ You can configure the `mcp.json` file as follows to connect to the Context7 MCP 
             "args": [
                 "exec",
                 "-i",
-                "mcp-server-docker",
+                "mcp-node-server-docker",
                 "npx",
                 "-y",
                 "@modelcontextprotocol/server-sequential-thinking"
@@ -92,8 +92,8 @@ You can configure the `mcp.json` file as follows to connect to the Context7 MCP 
 To stop and remove containers, use the following commands:
 
 ```bash
-docker stop mcp-server-docker
-docker rm mcp-server-docker
+docker stop mcp-node-server-docker
+docker rm mcp-node-server-docker
 ```
 
 Following this guide, you can easily deploy and configure the Context7 Documentation MCP Server in a Docker environment and utilize it with your client.
@@ -125,12 +125,12 @@ docker build -t node-base-image .
 Run the Docker container using the built image.
 
 ```bash
-docker run -d --name mcp-server-docker -it node-base-image
+docker run -d --name mcp-node-server-docker -it node-base-image
 ```
 
 -   `-d`: Runs the container in detached mode (in the background).
--   `--name mcp-server-docker`: Assigns the name `mcp-server-docker` to the container.
-    > **Note**: The container name specified with the `--name` option (`mcp-server-docker`) must be unique within the Docker host. If a container with the same name is already running or stopped, a new container cannot be started. In this case, you must stop and remove the existing container or use a different name.
+-   `--name mcp-node-server-docker`: Assigns the name `mcp-node-server-docker` to the container.
+    > **Note**: The container name specified with the `--name` option (`mcp-node-server-docker`) must be unique within the Docker host. If a container with the same name is already running or stopped, a new container cannot be started. In this case, you must stop and remove the existing container or use a different name.
 -   `-it`: Enables interactive mode for the container and allocates a TTY. This is useful when executing commands inside the container.
 -   `node-base-image`: The name of the Docker image to run.
 
@@ -173,11 +173,11 @@ docker build -t python-mcp-base-image .
 Run the Docker container using the built image.
 
 ```bash
-docker run -d --name mcp-uv-server-docker -it python-mcp-base-image
+docker run -d --name mcp-python-server-docker -it python-mcp-base-image
 ```
 
 -   `-d`: Runs the container in detached mode (in the background).
--   `--name mcp-uv-server-docker`: Assigns the name `mcp-uv-server-docker` to the container.
+-   `--name mcp-python-server-docker`: Assigns the name `mcp-python-server-docker` to the container.
 -   `-it`: Enables interactive mode for the container and allocates a TTY.
 -   `python-mcp-base-image`: The name of the Docker image to run.
 
@@ -191,7 +191,7 @@ Here's an example of `mcp.json` client configuration for running a Python-based 
             "args": [
                 "exec",
                 "-i",
-                "mcp-uv-server-docker",
+                "mcp-python-server-docker",
                 "uv",
                 "run",
                 "/app/custom_mcp_server.py"
@@ -205,8 +205,8 @@ After adding this configuration, you should restart your MCP client (e.g., Curso
 To stop and remove containers, use the following commands:
 
 ```bash
-docker stop mcp-uv-server-docker
-docker rm mcp-uv-server-docker
+docker stop mcp-python-server-docker
+docker rm mcp-python-server-docker
 ```
 
 
@@ -221,8 +221,8 @@ If the MCP server is not working as expected, you can check the Docker container
     ```bash
     docker logs <container_name>
     # Example:
-    # docker logs mcp-server-docker
-    # docker logs mcp-uv-server-docker
+    # docker logs mcp-node-server-docker
+    # docker logs mcp-python-server-docker
     ```
     This command displays all logs output by the container to standard output (stdout) and standard error (stderr) since it started. You can check the server's startup process, error messages, processed requests, and more.
 

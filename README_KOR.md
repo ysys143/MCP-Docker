@@ -1,7 +1,30 @@
 # MCP 서버 도커 실행 및 클라이언트 설정 가이드
 
+## 프로젝트 구조
 
-![How Docker Revolutionizes MCP](docker-mcp.png)
+```
+mcp-docker/
+├── oauth2-demo/                    # OAuth2 데모 서버
+│   ├── mcp_oauth2_server.py       #   FastAPI OAuth2 서버
+│   ├── test_oauth2_demo.py        #   자동 테스트 스크립트
+│   ├── Dockerfile                 #   OAuth2 서버용 Docker 파일
+│   └── README.md                  #   OAuth2 데모 문서
+├── docker/                        # Docker 관련 파일들
+│   └── dockerfile                 #   메인 MCP 서버용 Docker 파일
+├── docs/                          # 문서들
+│   ├── Security.md                #   보안 모범 사례
+│   └── docker-mcp.png            #   아키텍처 이미지
+├── scripts/                       # 실행 스크립트들
+│   └── run_mcp_server_with_logging.sh  # 로깅 스크립트
+├── examples/                      # 예제 파일들
+│   └── custom_mcp_server.py       #   기본 MCP 서버 예제
+├── docker-compose.yml             # Docker Compose 설정
+├── requirements.txt               # Python 의존성
+├── README_KOR.md                  # 한국어 문서 (이 파일)
+└── README.md                      # 영어 문서
+```
+
+![How Docker Revolutionizes MCP](docs/docker-mcp.png)
 [Docker Blog: How to build and deliver an MCP server for production](https://www.docker.com/blog/build-to-prod-mcp-servers-with-docker/)
 
 기존 MCP(Model Context Protocol) 워크플로우의 문제점
@@ -30,10 +53,10 @@ Docker를 통해 MCP 서버 실행환경을 격리하면,
 node20 이미지를 도커로 띄웁니다. 
 
 ```bash
-docker run -d --name mcp-server-docker -it node:20-slim bash
+docker run -d --name mcp-node-server-docker -it node:20-slim bash
 ```
 
-> **참고**: `--name` 옵션으로 지정된 컨테이너 이름(`mcp-server-docker`)은 Docker 호스트 내에서 고유해야 합니다. 같은 이름의 컨테이너가 이미 실행 중이거나 중지된 상태라면 새 컨테이너를 시작할 수 없습니다. 이 경우 기존 컨테이너를 중지 및 제거하거나 다른 이름을 사용해야 합니다.
+> **참고**: `--name` 옵션으로 지정된 컨테이너 이름(`mcp-node-server-docker`)은 Docker 호스트 내에서 고유해야 합니다. 같은 이름의 컨테이너가 이미 실행 중이거나 중지된 상태라면 새 컨테이너를 시작할 수 없습니다. 이 경우 기존 컨테이너를 중지 및 제거하거나 다른 이름을 사용해야 합니다.
 
 
 ## 3. MCP 클라이언트 설정 (.cursor/mcp.json 예시)
@@ -46,10 +69,10 @@ MCP 클라이언트(예: Cursor)는 `mcp.json` 파일을 통해 Context7 Documen
 MCP 서버가 컨테이너 내에서 제대로 구동 준비가 되었는지 확인하려면, 다음 명령으로 컨테이너 내부에 접속하여 MCP 서버 스크립트를 직접 실행해볼 수 있습니다:
 
 ```bash
-docker exec -it mcp-server-docker bash
+docker exec -it mcp-node-server-docker bash
 # (컨테이너 내부에서) npx -y @upstash/context7-mcp@latest
 # 또는 Python 기반 서버의 경우:
-# docker exec -it mcp-uv-server-docker bash
+# docker exec -it mcp-python-server-docker bash
 # (컨테이너 내부에서) uv run /app/custom_mcp_server.py
 ```
 
@@ -63,7 +86,7 @@ docker exec -it mcp-server-docker bash
             "args": [
                 "exec",
                 "-i",
-                "mcp-server-docker",
+                "mcp-node-server-docker",
                 "npx",
                 "-y",
                 "@upstash/context7-mcp@latest"
@@ -74,7 +97,7 @@ docker exec -it mcp-server-docker bash
             "args": [
                 "exec",
                 "-i",
-                "mcp-server-docker",
+                "mcp-node-server-docker",
                 "npx",
                 "-y",
                 "@modelcontextprotocol/server-sequential-thinking"
@@ -90,8 +113,8 @@ docker exec -it mcp-server-docker bash
 컨테이너를 중지하고 제거하려면 다음 명령을 사용합니다.
 
 ```bash
-docker stop mcp-server-docker
-docker rm mcp-server-docker
+docker stop mcp-node-server-docker
+docker rm mcp-node-server-docker
 ```
 
 이 가이드에 따라 Context7 Documentation MCP 서버를 Docker 환경에서 쉽게 배포하고 클라이언트에서 설정하여 활용할 수 있습니다.
@@ -123,12 +146,12 @@ docker build -t node-base-image .
 빌드된 이미지를 사용하여 Docker 컨테이너를 실행합니다.
 
 ```bash
-docker run -d --name mcp-server-docker -it node-base-image
+docker run -d --name mcp-node-server-docker -it node-base-image
 ```
 
 -   `-d`: 컨테이너를 백그라운드에서 실행합니다.
--   `--name mcp-server-docker`: 컨테이너에 `mcp-server-docker`라는 이름을 지정합니다.
-    > **참고**: `--name` 옵션으로 지정된 컨테이너 이름(`mcp-server-docker`)은 Docker 호스트 내에서 고유해야 합니다. 같은 이름의 컨테이너가 이미 실행 중이거나 중지된 상태라면 새 컨테이너를 시작할 수 없습니다. 이 경우 기존 컨테이너를 중지 및 제거하거나 다른 이름을 사용해야 합니다.
+-   `--name mcp-node-server-docker`: 컨테이너에 `mcp-node-server-docker`라는 이름을 지정합니다.
+    > **참고**: `--name` 옵션으로 지정된 컨테이너 이름(`mcp-node-server-docker`)은 Docker 호스트 내에서 고유해야 합니다. 같은 이름의 컨테이너가 이미 실행 중이거나 중지된 상태라면 새 컨테이너를 시작할 수 없습니다. 이 경우 기존 컨테이너를 중지 및 제거하거나 다른 이름을 사용해야 합니다.
 -   `-it`: 컨테이너의 상호 작용 모드를 활성화하고 TTY를 할당합니다. 이는 컨테이너 내부에서 명령을 실행할 때 유용합니다.
 -   `node-base-image`: 실행할 Docker 이미지의 이름입니다.
 
@@ -171,11 +194,11 @@ docker build -t python-mcp-base-image .
 빌드된 이미지를 사용하여 Docker 컨테이너를 실행합니다.
 
 ```bash
-docker run -d --name mcp-uv-server-docker -it python-mcp-base-image
+docker run -d --name mcp-python-server-docker -it python-mcp-base-image
 ```
 
 -   `-d`: 컨테이너를 백그라운드에서 실행합니다.
--   `--name mcp-uv-server-docker`: 컨테이너에 `mcp-uv-server-docker`라는 이름을 지정합니다.
+-   `--name mcp-python-server-docker`: 컨테이너에 `mcp-python-server-docker`라는 이름을 지정합니다.
 -   `-it`: 컨테이너의 상호 작용 모드를 활성화하고 TTY를 할당합니다.
 -   `python-mcp-base-image`: 실행할 Docker 이미지의 이름입니다.
 
@@ -189,7 +212,7 @@ docker run -d --name mcp-uv-server-docker -it python-mcp-base-image
             "args": [
                 "exec",
                 "-i",
-                "mcp-uv-server-docker",
+                "mcp-python-server-docker",
                 "uv",
                 "run",
                 "/app/custom_mcp_server.py"
@@ -203,8 +226,8 @@ docker run -d --name mcp-uv-server-docker -it python-mcp-base-image
 컨테이너를 중지하고 제거하려면 다음 명령을 사용합니다.
 
 ```bash
-docker stop mcp-uv-server-docker
-docker rm mcp-uv-server-docker
+docker stop mcp-python-server-docker
+docker rm mcp-python-server-docker
 ```
 
 
@@ -219,8 +242,8 @@ MCP 서버가 예상대로 작동하지 않을 경우, Docker 컨테이너의 �
     ```bash
     docker logs <컨테이너_이름>
     # 예시:
-    # docker logs mcp-server-docker
-    # docker logs mcp-uv-server-docker
+    # docker logs mcp-node-server-docker
+    # docker logs mcp-python-server-docker
     ```
     이 명령은 컨테이너가 시작된 이후 표준 출력(stdout) 및 표준 오류(stderr)로 내보낸 모든 로그를 보여줍니다. 서버의 시작 과정, 오류 메시지, 처리된 요청 등을 확인할 수 있습니다.
 

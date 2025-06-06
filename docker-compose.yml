@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # 메인 MCP 서버
+  mcp-server:
+    build:
+      context: .
+      dockerfile: docker/dockerfile
+    container_name: mcp-python-server-docker
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/workspace
+    environment:
+      - PYTHONPATH=/workspace
+    restart: unless-stopped
+    networks:
+      - mcp-network
+
+  # OAuth2 웹 서버
+  oauth2-web-server:
+    build:
+      context: .
+      dockerfile: oauth2-demo/config/Dockerfile
+    container_name: mcp-oauth2-web-server
+    ports:
+      - "8081:8081"
+    environment:
+      - JWT_SECRET_KEY=mcp-oauth2-demo-secret-key-2025
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/.well-known/openid-configuration"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+
+  # Node.js 기반 MCP 서버
+  mcp-node-server:
+    image: node:20-slim
+    container_name: mcp-node-server-docker
+    volumes:
+      - .:/workspace
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - mcp-network
+    stdin_open: true
+    tty: true
+    command: ["tail", "-f", "/dev/null"]
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  mcp-data:
+    driver: local 

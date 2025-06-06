@@ -3,7 +3,12 @@ import asyncio
 
 mcp = FastMCP("Weather MCP Server")
 
-@mcp.tool()
+# 원격 OAuth2 MCP 도구 추가
+# `mcp-oauth2-web-server`는 docker-compose 네트워크 내의 서비스 이름입니다.
+# `8081`은 oauth2-web-server가 노출하는 포트이며, `/mcp_tools`는 FastMCP 앱이 마운트된 경로입니다.
+# mcp.add_remote_tools("http://mcp-oauth2-web-server:8081/mcp_tools") # 재솔님의 요청에 따라 제거
+
+@mcp.tool
 async def get_weather(city: str) -> dict:
     """지정된 도시의 현재 날씨 정보를 반환합니다."""
     # 실제 날씨 API 호출 대신 가상의 날씨 데이터를 반환합니다.
