@@ -51,8 +51,10 @@ mcp-docker/
 ```
 
 [Korean Version (한국어 버전)](README_KOR.md)
-
 [Docker Blog: How to build and deliver an MCP server for production](https://www.docker.com/blog/build-to-prod-mcp-servers-with-docker/)
+
+![How Docker Revolutionizes MCP](charts/docker-mcp.png)
+
 
 ### 🏗️ Architecture Overview
 
