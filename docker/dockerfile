@@ -14,14 +14,8 @@ RUN curl -sSfL https://astral.sh/uv/install.sh | sh \
 COPY requirements.txt .
 RUN uv pip install -r requirements.txt --system
 
-# MCP 서버 스크립트 복사 및 빌드 (필요한 경우)
-# 예시: custom_mcp_server.py라는 파일이 있다고 가정
-COPY custom_mcp_server.py .
-# 만약 빌드 과정이 필요하다면 여기에 추가
-# RUN python custom_mcp_server.py build # 예시
+# 전체 워크스페이스를 마운트하므로 별도 복사 불필요
+# COPY는 docker-compose의 volumes로 대체됨
 
-# 로깅 쉘 스크립트 복사 및 실행 권한 부여
-COPY run_mcp_server_with_logging.sh .
-RUN chmod +x run_mcp_server_with_logging.sh
-
+# MCP 서버는 docker exec로 호출되므로 컨테이너를 계속 실행 상태로 유지
 CMD ["tail", "-f", "/dev/null"]
