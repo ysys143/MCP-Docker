@@ -234,5 +234,15 @@ async def validate_oauth2_setup() -> str:
         "note": "이 검증은 MCP stdio 통신을 사용하며 외부 HTTP 요청을 하지 않습니다"
     }, ensure_ascii=False, indent=2)
 
+class OAuth2MCPTools:
+    """OAuth2 MCP 도구 클래스"""
+    
+    def __init__(self):
+        self.mcp = mcp
+    
+    def get_app(self):
+        """MCP 앱 인스턴스 반환"""
+        return self.mcp
+
 if __name__ == "__main__":
     mcp.run() 

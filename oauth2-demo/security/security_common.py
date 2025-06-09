@@ -421,7 +421,7 @@ _security_auditor = None
 def get_pii_detector() -> PiiDetector:
     """글로벌 PII 탐지기 인스턴스 반환"""
     global _pii_detector
-    # 패턴 파일이 업데이트될 수 있으므로 항상 새로운 인스턴스 생성
+    if _pii_detector is None:
         _pii_detector = PiiDetector()
     return _pii_detector
 
